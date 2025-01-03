@@ -1,30 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic PlantUML ERD Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic PlantUML ERD Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>ERD Diagram Generator</h1>
-  <textarea id="requirements" placeholder="Write your requirements here..." rows="6" cols="50"></textarea>
-  <button onclick="generateDiagram()">Generate Diagram</button>
-  <div>
-    <h2>Generated Diagram:</h2>
-    <img id="uml-diagram" alt="Generated ERD Diagram">
-  </div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">ERD Diagram Generator</h1>
+        <textarea id="requirements" placeholder="Write your requirements here..." rows="6" class="w-full p-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        <button onclick="generateDiagram()" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300">Generate Diagram</button>
+        <div id="result" class="mt-8 hidden">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Generated Diagram:</h2>
+            <div class="flex justify-center mb-4">
+                <img id="uml-diagram" alt="Generated ERD Diagram" class="max-w-full h-auto">
+            </div>
+            <div class="flex justify-center">
+                <a id="download-link" href="#" download="erd-diagram.png" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300">Download Diagram</a>
+            </div>
+            <div id="error-message" class="text-red-500 text-center mt-4"></div>
+        </div>
+    </div>
 
-  <script>
-    async function generateDiagram() {
-      const requirements = document.getElementById("requirements").value;
-      const response = await fetch('/generate-diagram', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requirements }),
-      });
-      const data = await response.json();
-      document.getElementById("uml-diagram").src = data.diagramUrl;
-    }
-  </script>
+    <script>
+        async function generateDiagram() {
+            const requirements = document.getElementById("requirements").value;
+            const resultDiv = document.getElementById("result");
+            const errorMessage = document.getElementById("error-message");
+            const umlDiagram = document.getElementById("uml-diagram");
+            const downloadLink = document.getElementById("download-link");
+
+            if (!requirements.trim()) {
+                errorMessage.textContent = "Please enter your requirements.";
+                resultDiv.classList.remove("hidden");
+                umlDiagram.classList.add("hidden");
+                downloadLink.classList.add("hidden");
+                return;
+            }
+
+            try {
+                const response = await fetch('/generate_erd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ requirements }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    umlDiagram.src = data.diagramUrl;
+                    umlDiagram.classList.remove("hidden");
+                    downloadLink.href = data.diagramUrl;
+                    downloadLink.classList.remove("hidden");
+                    errorMessage.textContent = "";
+                } else {
+                    throw new Error(data.error || "An error occurred while generating the diagram.");
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                umlDiagram.classList.add("hidden");
+                downloadLink.classList.add("hidden");
+            }
+
+            resultDiv.classList.remove("hidden");
+        }
+    </script>
 </body>
 </html>
+
