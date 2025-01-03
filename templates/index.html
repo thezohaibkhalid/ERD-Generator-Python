@@ -17,7 +17,7 @@
                 <img id="uml-diagram" alt="Generated ERD Diagram" class="max-w-full h-auto">
             </div>
             <div class="flex justify-center">
-                <a id="download-link" href="#" download="erd-diagram.png" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300">Download Diagram</a>
+                <a id="download-link" href="#" download="erd-diagram.jpg" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition duration-300">Download Diagram</a>
             </div>
             <div id="error-message" class="text-red-500 text-center mt-4"></div>
         </div>
@@ -49,9 +49,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    // Use a compressed or resized URL for downloading the image.
                     umlDiagram.src = data.diagramUrl;
                     umlDiagram.classList.remove("hidden");
-                    downloadLink.href = data.diagramUrl;
+
+                    // Assuming server returns the image as a URL or path to a compressed version.
+                    downloadLink.href = data.compressedDiagramUrl || data.diagramUrl; // Use compressed if available
                     downloadLink.classList.remove("hidden");
                     errorMessage.textContent = "";
                 } else {
@@ -68,4 +71,3 @@
     </script>
 </body>
 </html>
-

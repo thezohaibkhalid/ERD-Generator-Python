@@ -22,17 +22,37 @@ def generate_diagram():
 
     try:
         # Define the prompt to generate PlantUML code based on the provided requirements
-        prompt = f"""You are an expert in generating professional PlantUML code for ERD diagrams. 
-        Generate a PlantUML ERD diagram using the @startchen and @endchen tags based on the following requirements:
+        prompt = f"""
+        You are an expert in generating accurate PlantUML code for Entity-Relationship Diagrams (ERD) using Chen's ERD notation.
+        Based on the provided requirements, generate a valid PlantUML ERD diagram enclosed within the @startuml and @enduml tags.
+
+        Follow these precise guidelines:
+
+        1. **Entities** should be represented in this format:
+        `entity ENTITY_NAME {{ attribute1 <<key>> attribute2 }}`
+        - `ENTITY_NAME` is the name of the entity.
+        - `attribute1` and `attribute2` are actual attributes of the entity. 
+        - The primary key attribute should be indicated with `<<key>>`.
+
+        2. **Relationships** should be written as:
+        `entity1 -- relationshipName -- entity2`
+        - Use `--` to represent a relationship between two entities.
+        - The relationship name can be a description or left empty, and cardinality will be indicated separately.
+        
+        3. **Cardinality** should be indicated as:
+        - `entity1 --1-- entity2` for one-to-one relationships.
+        - `entity1 --1-- N entity2` for one-to-many relationships.
+        - `entity1 --N-- N entity2` for many-to-many relationships.
+        
+        4. Ensure that the diagram begins with the `@startuml` tag and ends with the `@enduml` tag, with no extra explanations or text.
+
+        Provide **only valid PlantUML code** for the ERD based on the following requirements:
 
         {requirements}
+        """
 
-        Ensure the following formatting:
-        - Entities should be written as: `entity ENTITY_NAME {{ attribute1 <<key>> attribute2 }}`
-        - Relationships should be written as: `relationship RELATIONSHIP_NAME {{ attribute1 }}`
-        - Cardinality should be indicated as: `RELATIONSHIP_NAME =1= ENTITY1` and `RELATIONSHIP_NAME -N- ENTITY2`
-        - The diagram must include the `@startchen` and `@endchen` tags, with no extra explanations or text.
-        Only provide valid PlantUML code for ERD diagrams."""
+
+
 
         # Generate the content using the AI model
         response = model.generate_content(prompt)
