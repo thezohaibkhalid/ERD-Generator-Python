@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic PlantUML ERD Generator</title>
+</head>
+<body>
+  <h1>ERD Diagram Generator</h1>
+  <textarea id="requirements" placeholder="Write your requirements here..." rows="6" cols="50"></textarea>
+  <button onclick="generateDiagram()">Generate Diagram</button>
+  <div>
+    <h2>Generated Diagram:</h2>
+    <img id="uml-diagram" alt="Generated ERD Diagram">
+  </div>
+
+  <script>
+    async function generateDiagram() {
+      const requirements = document.getElementById("requirements").value;
+      const response = await fetch('/generate-diagram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requirements }),
+      });
+      const data = await response.json();
+      document.getElementById("uml-diagram").src = data.diagramUrl;
+    }
+  </script>
+</body>
+</html>
